@@ -22,43 +22,43 @@ import Downloader from './utils/Downloader.js';
 type loader = {
 	/**
 	 * Path to loader directory. Relative to absolute path to Minecraft's root directory (config option `path`).
-	 * 
+	 *
 	 * If `undefined`, defaults to `.minecraft/loader/<loader_type>`.
-	 * 
+	 *
 	 * Example: `'fabricfiles'`.
 	 */
-	path?: string,
+	path?: string;
 	/**
-	 * Loader type. 
-	 * 
+	 * Loader type.
+	 *
 	 * Acceptable values: `'forge'`, `'neoforge'`, `'fabric'`, `'legacyfabric'`, `'quilt'`.
 	 */
-	type?: string,
+	type?: string;
 	/**
 	 * Loader build (version).
-	 * 
+	 *
 	 * Acceptable values: `'latest'`, `'recommended'`, actual version.
-	 * 
+	 *
 	 * Example: `'0.16.3'`
 	 */
-	build?: string,
+	build?: string;
 	/**
 	 * Should the launcher use a loader?
 	 */
-	enable?: boolean
-}
+	enable?: boolean;
+};
 
 /**
  * Screen options.
  */
 type screen = {
-	width?: number,
-	height?: number,
+	width?: number;
+	height?: number;
 	/**
 	 * Should Minecraft be started in fullscreen mode?
 	 */
-	fullscreen?: boolean
-}
+	fullscreen?: boolean;
+};
 
 /**
  * Memory limits
@@ -67,135 +67,135 @@ type memory = {
 	/**
 	 * Sets the `-Xms` JVM argument. This is the initial memory usage.
 	 */
-	min?: string,
+	min?: string;
 	/**
 	 * Sets the `-Xmx` JVM argument. This is the limit of memory usage.
 	 */
-	max?: string
-}
+	max?: string;
+};
 
-/** 
+/**
  * Java download options
  */
 type javaOPTS = {
 	/**
-	 * Absolute path to Java binaries directory. 
-	 * 
+	 * Absolute path to Java binaries directory.
+	 *
 	 * If set, expects Java to be already downloaded. If `undefined`, downloads Java and sets it automatically.
-	 * 
+	 *
 	 * Example: `'C:\Program Files\Eclipse Adoptium\jdk-21.0.2.13-hotspot\bin'`
 	 */
-	path?: string,
-	/** 
+	path?: string;
+	/**
 	 * Java version number.
-	 * 
+	 *
 	 * If set, fetched from https://api.adoptium.net.
 	 * If `undefined`, fetched from [Mojang](https://launchermeta.mojang.com/v1/products/java-runtime/2ec0cc96c44e5a76b9c8b7c39df7210883d12871/all.json).
-	 * 
+	 *
 	 * Example: `21`
 	 */
-	version?: string,
-	/** 
+	version?: string;
+	/**
 	 * Java image type. Acceptable values: `'jdk'`, `'jre'`, `'testimage'`, `'debugimage'`, `'staticlibs'`, `'sources'`, `'sbom'`.
-	 * 
+	 *
 	 * Using `jre` is recommended since it only has what's needed.
 	 */
-	type: string
-}
+	type: string;
+};
 
-/** 
+/**
  * Launch options.
  */
 export type LaunchOPTS = {
 	/**
 	 * URL to the launcher backend. Refer to [Selvania Launcher Wiki](https://github.com/luuxis/Selvania-Launcher/blob/master/docs/wiki_EN-US.md) for setup instructions.
 	 */
-	url?: string | null,
+	url?: string | null;
 	/**
-	 * Something to Authenticate the player. 
-	 * 
+	 * Something to Authenticate the player.
+	 *
 	 * Refer to `Mojang`, `Microsoft` or `AZauth` classes.
-	 * 
+	 *
 	 * Example: `await Mojang.login('Luuxis')`
 	 */
-	authenticator: any,
+	authenticator: any;
 	/**
 	 * Connection timeout in milliseconds.
 	 */
-	timeout?: number,
+	timeout?: number;
 	/**
 	 * Absolute path to Minecraft's root directory.
-	 * 
+	 *
 	 * Example: `'%appdata%/.minecraft'`
 	 */
-	path: string,
-	/** 
+	path: string;
+	/**
 	 * Minecraft version.
-	 * 
+	 *
 	 * Example: `'1.20.4'`
 	 */
-	version: string,
+	version: string;
 	/**
 	 * Path to instance directory. Relative to absolute path to Minecraft's root directory (config option `path`).
 	 * This separates game files (e.g. versions, libraries, assets) from game data (e.g. worlds, resourcepacks, options).
-	 * 
+	 *
 	 * Example: `'PokeMoonX'`
 	 */
-	instance?: string,
+	instance?: string;
 	/**
 	 * Should Minecraft process be independent of launcher?
 	 */
-	detached?: boolean,
+	detached?: boolean;
 	/**
 	 * How many concurrent downloads can be in progress at once.
 	 */
-	downloadFileMultiple?: number,
+	downloadFileMultiple?: number;
 	/**
 	 * Should the launcher bypass offline mode?
-	 * 
+	 *
 	 * If `true`, the launcher will not check if the user is online.
 	 */
-	bypassOffline?: boolean,
-	intelEnabledMac?: boolean,
+	bypassOffline?: boolean;
+	intelEnabledMac?: boolean;
 	/**
 	 * Loader config
 	 */
-	loader: loader,
+	loader: loader;
 	/**
 	 * MCPathcer directory. (idk actually luuxis please verify this)
-	 * 
+	 *
 	 * If `instance` if set, relative to it.
 	 * If `instance` is `undefined`, relative to `path`.
 	 */
-	mcp: any,
+	mcp: any;
 	/**
 	 * Should game files be verified each launch?
 	 */
-	verify: boolean,
+	verify: boolean;
 	/**
 	 * Files to ignore from instance. (idk actually luuxis please verify this)
 	 */
-	ignored: string[],
+	ignored: string[];
 	/**
 	 * Custom JVM arguments. Read more on [wiki.vg](https://wiki.vg/Launching_the_game#JVM_Arguments)
 	 */
-	JVM_ARGS: string[],
+	JVM_ARGS: string[];
 	/**
 	 * Custom game arguments. Read more on [wiki.vg](https://wiki.vg/Launching_the_game#Game_Arguments)
 	 */
-	GAME_ARGS: string[],
+	GAME_ARGS: string[];
 	/**
 	 * Java options.
 	 */
-	java: javaOPTS,
+	java: javaOPTS;
 	/**
 	 * Screen options.
 	 */
-	screen: screen,
+	screen: screen;
 	/**
 	 * Memory limit options.
 	 */
-	memory: memory
+	memory: memory;
 };
 
 export default class Launch extends EventEmitter {
@@ -251,7 +251,7 @@ export default class Launch extends EventEmitter {
 
 			memory: {
 				min: '1G',
-				max: '2G'
+				max: '2G',
 			},
 			...opt,
 		};
@@ -260,18 +260,19 @@ export default class Launch extends EventEmitter {
 		this.options.path = path.resolve(this.options.path).replace(/\\/g, '/');
 
 		if (this.options.mcp) {
-			if (this.options.instance) this.options.mcp = `${this.options.path}/instances/${this.options.instance}/${this.options.mcp}`
-			else this.options.mcp = path.resolve(`${this.options.path}/${this.options.mcp}`).replace(/\\/g, '/')
+			if (this.options.instance)
+				this.options.mcp = `${this.options.path}/instances/${this.options.instance}/${this.options.mcp}`;
+			else this.options.mcp = path.resolve(`${this.options.path}/${this.options.mcp}`).replace(/\\/g, '/');
 		}
 
 		if (this.options.loader.type) {
-			this.options.loader.type = this.options.loader.type.toLowerCase()
-			this.options.loader.build = this.options.loader.build.toLowerCase()
+			this.options.loader.type = this.options.loader.type.toLowerCase();
+			this.options.loader.build = this.options.loader.build.toLowerCase();
 		}
 
-		if (!this.options.authenticator) return this.emit("error", { error: "Authenticator not found" });
-		if (this.options.downloadFileMultiple < 1) this.options.downloadFileMultiple = 1
-		if (this.options.downloadFileMultiple > 30) this.options.downloadFileMultiple = 30
+		if (!this.options.authenticator) return this.emit('error', { error: 'Authenticator not found' });
+		if (this.options.downloadFileMultiple < 1) this.options.downloadFileMultiple = 1;
+		if (this.options.downloadFileMultiple > 30) this.options.downloadFileMultiple = 30;
 		if (typeof this.options.loader.path !== 'string') this.options.loader.path = `./loader/${this.options.loader.type}`;
 		this.start();
 	}
@@ -283,6 +284,10 @@ export default class Launch extends EventEmitter {
 		}
 
 		let data: any = await this.DownloadGame();
+		if (data.cancelled) {
+			this.emit('cancelled', 'Launch has been cancelled');
+			return;
+		}
 		if (data.error) return this.emit('error', data);
 
 		if (this.isCancelled) {
@@ -292,7 +297,10 @@ export default class Launch extends EventEmitter {
 
 		let { minecraftJson, minecraftLoader, minecraftVersion, minecraftJava } = data;
 
-		let minecraftArguments: any = await new argumentsMinecraft(this.options).GetArguments(minecraftJson, minecraftLoader);
+		let minecraftArguments: any = await new argumentsMinecraft(this.options).GetArguments(
+			minecraftJson,
+			minecraftLoader,
+		);
 		if (minecraftArguments.error) return this.emit('error', minecraftArguments);
 
 		let loaderArguments: any = await new loaderMinecraft(this.options).GetArguments(minecraftLoader, minecraftVersion);
@@ -304,27 +312,27 @@ export default class Launch extends EventEmitter {
 			...loaderArguments.jvm,
 			minecraftArguments.mainClass,
 			...minecraftArguments.game,
-			...loaderArguments.game
-		]
+			...loaderArguments.game,
+		];
 
 		let java: any = this.options.java.path ? this.options.java.path : minecraftJava.path;
 		let logs = this.options.instance ? `${this.options.path}/instances/${this.options.instance}` : this.options.path;
 		if (!fs.existsSync(logs)) fs.mkdirSync(logs, { recursive: true });
 
-		let argumentsLogs: string = Arguments.join(' ')
-		argumentsLogs = argumentsLogs.replaceAll(this.options.authenticator?.access_token, '????????')
-		argumentsLogs = argumentsLogs.replaceAll(this.options.authenticator?.client_token, '????????')
-		argumentsLogs = argumentsLogs.replaceAll(this.options.authenticator?.uuid, '????????')
-		argumentsLogs = argumentsLogs.replaceAll(this.options.authenticator?.xboxAccount?.xuid, '????????')
-		argumentsLogs = argumentsLogs.replaceAll(`${this.options.path}/`, '')
+		let argumentsLogs: string = Arguments.join(' ');
+		argumentsLogs = argumentsLogs.replaceAll(this.options.authenticator?.access_token, '????????');
+		argumentsLogs = argumentsLogs.replaceAll(this.options.authenticator?.client_token, '????????');
+		argumentsLogs = argumentsLogs.replaceAll(this.options.authenticator?.uuid, '????????');
+		argumentsLogs = argumentsLogs.replaceAll(this.options.authenticator?.xboxAccount?.xuid, '????????');
+		argumentsLogs = argumentsLogs.replaceAll(`${this.options.path}/`, '');
 		this.emit('data', `Launching with arguments ${argumentsLogs}`);
 
 		if (this.isCancelled) {
-			this.emit('error', { error: 'Launch has been cancelled' });
+			this.emit('cancelled', 'Launch has been cancelled');
 			return;
 		}
 
-		this.minecraftProcess = spawn(java, Arguments, { cwd: logs,detached: this.options.detached });
+		this.minecraftProcess = spawn(java, Arguments, { cwd: logs, detached: this.options.detached });
 		this.minecraftProcess.stdout?.on('data', (data) => this.emit('data', data.toString('utf-8')));
 		this.minecraftProcess.stderr?.on('data', (data) => this.emit('data', data.toString('utf-8')));
 		this.minecraftProcess.on('close', (code) => {
@@ -337,20 +345,20 @@ export default class Launch extends EventEmitter {
 		let InfoVersion = await new jsonMinecraft(this.options).GetInfoVersion();
 		let loaderJson: any = null;
 		if ('error' in InfoVersion) {
-			return this.emit('error', InfoVersion);
+			return { error: InfoVersion.error };
 		}
 		let { json, version } = InfoVersion;
 
-		let libraries = new librariesMinecraft(this.options)
-		let bundle = new bundleMinecraft(this.options)
-		let java = new javaMinecraft(this.options)
+		let libraries = new librariesMinecraft(this.options);
+		let bundle = new bundleMinecraft(this.options);
+		let java = new javaMinecraft(this.options);
 
 		java.on('progress', (progress: any, size: any, element: any) => {
-			this.emit('progress', progress, size, element)
+			this.emit('progress', progress, size, element);
 		});
 
 		java.on('extract', (progress: any) => {
-			this.emit('extract', progress)
+			this.emit('extract', progress);
 		});
 
 		let gameLibraries: any = await libraries.Getlibraries(json);
@@ -358,20 +366,24 @@ export default class Launch extends EventEmitter {
 		let gameAssets: any = await new assetsMinecraft(this.options).getAssets(json);
 		let gameJava: any = this.options.java.path ? { files: [] } : await java.getJavaFiles(json);
 
-		if (gameJava.error) return gameJava
+		if (gameJava.error) return { error: gameJava.error };
 
-		let filesList: any = await bundle.checkBundle([...gameLibraries, ...gameAssetsOther, ...gameAssets, ...gameJava.files]);
+		let filesList: any = await bundle.checkBundle([
+			...gameLibraries,
+			...gameAssetsOther,
+			...gameAssets,
+			...gameJava.files,
+		]);
 
 		if (filesList.length > 0) {
-			if (this.isCancelled) return { error: 'Download has been cancelled' };
+			if (this.isCancelled) return { cancelled: true };
 
 			this.currentDownloader = new Downloader();
 			let totsize = await bundle.getTotalSize(filesList);
 
-			this.currentDownloader.on('progress',(DL: any, totDL: any, element: any) => {
-					this.emit('progress', DL, totDL, element);
-				},
-			);
+			this.currentDownloader.on('progress', (DL: any, totDL: any, element: any) => {
+				this.emit('progress', DL, totDL, element);
+			});
 
 			this.currentDownloader.on('speed', (speed: any) => {
 				this.emit('speed', speed);
@@ -397,12 +409,12 @@ export default class Launch extends EventEmitter {
 			this.downloadPromise = null;
 
 			if (this.isCancelled) {
-				return { error: 'Download has been cancelled' };
+				return { cancelled: true };
 			}
 		}
 
 		if (this.options.loader.enable === true) {
-			let loaderInstall = new loaderMinecraft(this.options)
+			let loaderInstall = new loaderMinecraft(this.options);
 
 			loaderInstall.on('extract', (extract: any) => {
 				this.emit('extract', extract);
@@ -420,17 +432,19 @@ export default class Launch extends EventEmitter {
 				this.emit('patch', patch);
 			});
 
-			let jsonLoader = await loaderInstall.GetLoader(version, this.options.java.path ? this.options.java.path : gameJava.path)
+			let jsonLoader = await loaderInstall
+				.GetLoader(version, this.options.java.path ? this.options.java.path : gameJava.path)
 				.then((data: any) => data)
 				.catch((err: any) => err);
-			if (jsonLoader.error) return jsonLoader;
+			if (jsonLoader.error) return { error: jsonLoader.error };
 			loaderJson = jsonLoader;
 		}
 
 		try {
-			if (this.isCancelled) return { error: 'Download has been cancelled' };
-			if (this.options.verify) await bundle.checkFiles([...gameLibraries, ...gameAssetsOther, ...gameAssets, ...gameJava.files]);
-			if (this.isCancelled) return { error: 'Download has been cancelled' };
+			if (this.isCancelled) return { cancelled: true };
+			if (this.options.verify)
+				await bundle.checkFiles([...gameLibraries, ...gameAssetsOther, ...gameAssets, ...gameJava.files]);
+			if (this.isCancelled) return { cancelled: true };
 
 			let natives = await libraries.natives(gameLibraries);
 			if (natives.length === 0) json.nativesList = false;
@@ -442,10 +456,10 @@ export default class Launch extends EventEmitter {
 				minecraftJson: json,
 				minecraftLoader: loaderJson,
 				minecraftVersion: version,
-				minecraftJava: gameJava
-			}
-		} catch(e) {
-			if (this.isCancelled) return { error: 'Download has been cancelled' };
+				minecraftJava: gameJava,
+			};
+		} catch (e) {
+			if (this.isCancelled) return { cancelled: true };
 			this.emit('error', e);
 			return { error: e?.message || e };
 		}
@@ -469,10 +483,7 @@ export default class Launch extends EventEmitter {
 				setTimeout(() => {
 					if (this.minecraftProcess && !this.minecraftProcess.killed) {
 						if (process.platform === 'win32' && this.minecraftProcess.pid) {
-							require('child_process').exec(
-								`taskkill /PID ${this.minecraftProcess.pid} /T /F`,
-								() => {},
-							);
+							require('child_process').exec(`taskkill /PID ${this.minecraftProcess.pid} /T /F`, () => {});
 						} else {
 							this.minecraftProcess.kill('SIGKILL');
 						}

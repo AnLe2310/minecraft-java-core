@@ -1,6 +1,6 @@
 const { Launch, Mojang } = require('minecraft-java-core');
 
-(async () => {
+const test = new Promise(async (resolve) => {
     const launcher = new Launch();
 
     launcher.Launch({
@@ -20,11 +20,23 @@ const { Launch, Mojang } = require('minecraft-java-core');
     launcher.on('progress', (progress, size) => console.log(`[DL] ${((progress / size) * 100).toFixed(2)}%`))
         .on('patch', pacth => process.stdout.write(pacth))
         .on('data', line => process.stdout.write(line))
-        .on('close', () => console.log('Game exited.'));
+        .on('close', () => console.log('Game exited.'))
+        .on('error', error => console.log(`Launcher error: ${error.message || error}`));
 
     // Cancel after 20 seconds
     setTimeout(() => {
         console.log('Cancelling the launch...');
         launcher.cancel();
-    }, 20000);
+    }, 10000);
+
+});
+
+(async () => {
+    let i = 1;
+    const interval = setInterval(() => {
+        console.log(i++);
+    }, 1000);
+
+    await test;
+    clearInterval(interval);
 })();
