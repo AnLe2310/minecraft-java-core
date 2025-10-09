@@ -15,39 +15,41 @@ let mc
             fs.writeFileSync('./account.json', JSON.stringify(mc, null, 4));
         } else {
             mc = await new Microsoft().refresh(mc);
-            if (mc.error) mc = await new Microsoft().getAuth();
             fs.writeFileSync('./account.json', JSON.stringify(mc, null, 4));
+            if (mc.error) process.exit(1);
         }
     }
 
-    await launcher.Launch({
-        url: "http://launcher.luuxis.fr/files?instance=Lost World - The Broken Script",
+    const opt = {
+        url: "https://luuxcraft.fr/api/user/48c74227-13d1-48d6-931b-0f12b73da340/instance",
         path: './minecraft',
         authenticator: mc,
-        version: '1.21.1',
+        version: '1.8.9',
         intelEnabledMac: true,
-        instance: "Lost World - The Broken Script",
+        instance: "Hypixel",
+
+        ignored: [
+            "config",
+            "logs",
+            "resourcepacks",
+            "options.txt",
+            "optionsof.txt"
+        ],
 
         loader: {
-            type: 'neoforge',
-            build: '21.1.193',
+            type: 'forge',
+            build: 'latest',
             enable: true
         },
         memory: {
-            min: '2G',
-            max: '4G'
+            min: '14G',
+            max: '16G'
         },
-        java: {
-            path: null,
-            version: '24',
-            type: 'jre',
-        },
-    });
+    };
 
-    launcher
-        .on('progress', (progress, size) => console.log(`[DL] ${((progress / size) * 100).toFixed(2)}%`))
-        .on('patch', pacth => process.stdout.write(pacth))
-        .on('data', line => process.stdout.write(line))
-        .on('error', err => console.error(err))
-        .on('close', () => console.log('Game exited.'));
+    launcher.Launch(opt);
+    launcher.on('progress', (progress, size) => console.log(`[DL] ${((progress / size) * 100).toFixed(2)}%`));
+    launcher.on('patch', pacth => process.stdout.write(pacth));
+    launcher.on('data', line => process.stdout.write(line));
+    launcher.on('error', err => console.error(err));
 })();
