@@ -13,7 +13,7 @@ import librariesMinecraft from './Minecraft/Minecraft-Libraries.js';
 import assetsMinecraft from './Minecraft/Minecraft-Assets.js';
 import loaderMinecraft from './Minecraft/Minecraft-Loader.js';
 import javaMinecraft from './Minecraft/Minecraft-Java.js';
-import bundleMinecraft from './Minecraft/Minecraft-Bundle.js';
+import bundleMinecraft, { BundleItem } from './Minecraft/Minecraft-Bundle.js';
 import argumentsMinecraft from './Minecraft/Minecraft-Arguments.js';
 
 import { isold } from './utils/Index.js';
@@ -200,12 +200,13 @@ export type LaunchOPTS = {
 
 export default class Launch extends EventEmitter {
 	options: LaunchOPTS;
+	extraBundle: BundleItem[] | undefined;
 	private isCancelled: boolean = false;
 	private minecraftProcess: ChildProcess | null = null;
 	private currentDownloader: Downloader | null = null;
 	private downloadPromise: Promise<void> | null = null;
 
-	async Launch(opt: LaunchOPTS) {
+	async Launch(opt: LaunchOPTS, extraBundle?: BundleItem[]) {
 		this.isCancelled = false;
 		this.minecraftProcess = null;
 		this.currentDownloader = null;
@@ -256,6 +257,7 @@ export default class Launch extends EventEmitter {
 			...opt,
 		};
 
+		this.extraBundle = extraBundle;
 		this.options = defaultOptions;
 		this.options.path = path.resolve(this.options.path).replace(/\\/g, '/');
 
@@ -366,6 +368,7 @@ export default class Launch extends EventEmitter {
 		let gameAssetsOther: any = await libraries.GetAssetsOthers(this.options.url);
 		let gameAssets: any = await new assetsMinecraft(this.options).getAssets(json);
 		let gameJava: any = this.options.java.path ? { files: [] } : await java.getJavaFiles(json);
+		let extraBundle: BundleItem[] = this.extraBundle ? this.extraBundle : [];
 
 		if (gameJava.error) return { error: gameJava.error };
 
@@ -374,6 +377,7 @@ export default class Launch extends EventEmitter {
 			...gameAssetsOther,
 			...gameAssets,
 			...gameJava.files,
+			...extraBundle,
 		]);
 
 		if (filesList.length > 0) {
