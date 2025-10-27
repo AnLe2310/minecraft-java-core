@@ -278,7 +278,7 @@ export default class Launch extends EventEmitter {
 		this.start();
 	}
 
-	async start() {
+	private async start() {
 		if (this.isCancelled) {
 			this.emit('cancelled', 'Launch has been cancelled');
 			return;
@@ -342,7 +342,7 @@ export default class Launch extends EventEmitter {
 		});
 	}
 
-	async DownloadGame() {
+	private async DownloadGame(): Promise<any> {
 		let InfoVersion = await new jsonMinecraft(this.options).GetInfoVersion();
 		let loaderJson: any = null;
 		if ('error' in InfoVersion) {
