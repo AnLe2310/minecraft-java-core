@@ -13,13 +13,13 @@ import LoaderDownloader, { LoaderType } from '../Minecraft-Loader/index.js';
  * You can expand this interface if your real code requires more fields.
  */
 interface LoaderOptions {
-	path: string;        // Base path for the Minecraft data or installation
+	path: string; // Base path for the Minecraft data or installation
 	loader: {
-		path?: string;      // Path to store loader files (e.g. Forge, Fabric)
-		type?: string;      // Type of loader (forge, fabric, etc.)
-		build?: string;    // Build number if applicable (e.g., for Forge)
+		path?: string; // Path to store loader files (e.g. Forge, Fabric)
+		type?: string; // Type of loader (forge, fabric, etc.)
+		build?: string; // Build number if applicable (e.g., for Forge)
 	};
-	downloadFileMultiple?: number;   // If your downloader can handle multiple files
+	downloadFileMultiple?: number; // If your downloader can handle multiple files
 }
 
 /**
@@ -83,9 +83,9 @@ export default class MinecraftLoader extends EventEmitter {
 				config: {
 					javaPath,
 					minecraftJar: `${this.options.path}/versions/${version}/${version}.jar`,
-					minecraftJson: `${this.options.path}/versions/${version}/${version}.json`
-				}
-			}
+					minecraftJson: `${this.options.path}/versions/${version}/${version}.json`,
+				},
+			},
 		});
 
 		return new Promise<LoaderJSON>((resolve, reject) => {
@@ -94,7 +94,7 @@ export default class MinecraftLoader extends EventEmitter {
 			loader.on('json', (json: LoaderJSON) => {
 				// Inject the loader path into each library if needed
 				const modifiedJson = json;
-				modifiedJson.libraries = modifiedJson.libraries.map(lib => {
+				modifiedJson.libraries = modifiedJson.libraries.map((lib) => {
 					lib.loader = this.loaderPath;
 					return lib;
 				});
@@ -135,7 +135,10 @@ export default class MinecraftLoader extends EventEmitter {
 	 * @param version The targeted Minecraft version (used for placeholder substitution)
 	 * @returns       An object with `game`, `jvm`, and an optional `mainClass` property
 	 */
-	public async GetArguments(json: LoaderJSON | null, version: string): Promise<{
+	public async GetArguments(
+		json: LoaderJSON | null,
+		version: string,
+	): Promise<{
 		game: string[];
 		jvm: string[];
 		mainClass?: string;
@@ -165,7 +168,7 @@ export default class MinecraftLoader extends EventEmitter {
 				jvmArg
 					.replace(/\${version_name}/g, version)
 					.replace(/\${library_directory}/g, `${this.loaderPath}/libraries`)
-					.replace(/\${classpath_separator}/g, process.platform === 'win32' ? ';' : ':')
+					.replace(/\${classpath_separator}/g, process.platform === 'win32' ? ';' : ':'),
 			);
 		}
 
@@ -173,7 +176,7 @@ export default class MinecraftLoader extends EventEmitter {
 		return {
 			game: args.game || [],
 			jvm: args.jvm || [],
-			mainClass: args.mainClass
+			mainClass: args.mainClass,
 		};
 	}
 }

@@ -59,10 +59,10 @@ export default class ForgePatcher extends EventEmitter {
 			const jarPath = path.resolve(this.options.path, 'libraries', jarInfo.path, jarInfo.name);
 
 			const args = processor.args
-				.map(arg => this.setArgument(arg, profile, config, neoForgeOld))
-				.map(arg => this.computePath(arg));
+				.map((arg) => this.setArgument(arg, profile, config, neoForgeOld))
+				.map((arg) => this.computePath(arg));
 
-			const classPaths = processor.classpath.map(cp => {
+			const classPaths = processor.classpath.map((cp) => {
 				const cpInfo = getPathLibraries(cp);
 				return `"${path.join(this.options.path, 'libraries', cpInfo.path, cpInfo.name)}"`;
 			});
@@ -76,24 +76,19 @@ export default class ForgePatcher extends EventEmitter {
 			await new Promise<void>((resolve) => {
 				const spawned = spawn(
 					`"${path.resolve(config.java)}"`,
-					[
-						'-classpath',
-						[`"${jarPath}"`, ...classPaths].join(path.delimiter),
-						mainClass,
-						...args
-					],
-					{ shell: true }
+					['-classpath', [`"${jarPath}"`, ...classPaths].join(path.delimiter), mainClass, ...args],
+					{ shell: true },
 				);
 
-				spawned.stdout.on('data', data => {
+				spawned.stdout.on('data', (data) => {
 					this.emit('patch', data.toString('utf-8'));
 				});
 
-				spawned.stderr.on('data', data => {
+				spawned.stderr.on('data', (data) => {
 					this.emit('patch', data.toString('utf-8'));
 				});
 
-				spawned.on('close', code => {
+				spawned.on('close', (code) => {
 					if (code !== 0) {
 						this.emit('error', `Le patcher Forge s'est terminé avec le code ${code}`);
 					}
@@ -110,7 +105,7 @@ export default class ForgePatcher extends EventEmitter {
 		for (const processor of Object.values(processors)) {
 			if (processor.sides && !processor.sides.includes('client')) continue;
 
-			processor.args.forEach(arg => {
+			processor.args.forEach((arg) => {
 				const finalArg = arg.replace('{', '').replace('}', '');
 				if (profile.data[finalArg]) {
 					if (finalArg === 'BINPATCH') return;
@@ -132,7 +127,7 @@ export default class ForgePatcher extends EventEmitter {
 	private setArgument(arg: string, profile: Profile, config: Config, neoForgeOld: boolean): string {
 		const finalArg = arg.replace('{', '').replace('}', '');
 
-		const universalLib = profile.libraries.find(lib => {
+		const universalLib = profile.libraries.find((lib) => {
 			if (this.options.loader.type === 'forge') return lib.name.startsWith('net.minecraftforge:forge');
 			else return lib.name.startsWith(neoForgeOld ? 'net.neoforged:forge' : 'net.neoforged:neoforge');
 		});
@@ -140,7 +135,9 @@ export default class ForgePatcher extends EventEmitter {
 		if (profile.data[finalArg]) {
 			if (finalArg === 'BINPATCH') {
 				const jarInfo = getPathLibraries(profile.path || (universalLib?.name ?? ''));
-				return `"${path.join(this.options.path, 'libraries', jarInfo.path, jarInfo.name).replace('.jar', '-clientdata.lzma')}"`;
+				return `"${path
+					.join(this.options.path, 'libraries', jarInfo.path, jarInfo.name)
+					.replace('.jar', '-clientdata.lzma')}"`;
 			}
 			return profile.data[finalArg].client;
 		}
