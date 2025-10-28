@@ -124,29 +124,31 @@ function loader(type: string) {
 			promotions: 'https://files.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json',
 			install: 'https://maven.minecraftforge.net/net/minecraftforge/forge/${version}/forge-${version}-installer',
 			universal: 'https://maven.minecraftforge.net/net/minecraftforge/forge/${version}/forge-${version}-universal',
-			client: 'https://maven.minecraftforge.net/net/minecraftforge/forge/${version}/forge-${version}-client'
+			client: 'https://maven.minecraftforge.net/net/minecraftforge/forge/${version}/forge-${version}-client',
 		};
 	} else if (type === 'neoforge') {
 		return {
 			legacyMetaData: 'https://maven.neoforged.net/api/maven/versions/releases/net/neoforged/forge',
 			metaData: 'https://maven.neoforged.net/api/maven/versions/releases/net/neoforged/neoforge',
-			legacyInstall: 'https://maven.neoforged.net/releases/net/neoforged/forge/${version}/forge-${version}-installer.jar',
-			install: 'https://maven.neoforged.net/releases/net/neoforged/neoforge/${version}/neoforge-${version}-installer.jar'
+			legacyInstall:
+				'https://maven.neoforged.net/releases/net/neoforged/forge/${version}/forge-${version}-installer.jar',
+			install:
+				'https://maven.neoforged.net/releases/net/neoforged/neoforge/${version}/neoforge-${version}-installer.jar',
 		};
 	} else if (type === 'fabric') {
 		return {
 			metaData: 'https://meta.fabricmc.net/v2/versions',
-			json: 'https://meta.fabricmc.net/v2/versions/loader/${version}/${build}/profile/json'
+			json: 'https://meta.fabricmc.net/v2/versions/loader/${version}/${build}/profile/json',
 		};
 	} else if (type === 'legacyfabric') {
 		return {
 			metaData: 'https://meta.legacyfabric.net/v2/versions',
-			json: 'https://meta.legacyfabric.net/v2/versions/loader/${version}/${build}/profile/json'
+			json: 'https://meta.legacyfabric.net/v2/versions/loader/${version}/${build}/profile/json',
 		};
 	} else if (type === 'quilt') {
 		return {
 			metaData: 'https://meta.quiltmc.org/v3/versions',
-			json: 'https://meta.quiltmc.org/v3/versions/loader/${version}/${build}/profile/json'
+			json: 'https://meta.quiltmc.org/v3/versions/loader/${version}/${build}/profile/json',
 		};
 	}
 	// If none match, return undefined
@@ -160,7 +162,7 @@ const mirrors = [
 	'https://maven.neoforged.net/releases',
 	'https://maven.creeperhost.net',
 	'https://libraries.minecraft.net',
-	'https://repo1.maven.org/maven2'
+	'https://repo1.maven.org/maven2',
 ];
 
 /**
@@ -171,20 +173,35 @@ const mirrors = [
  * @param prefix A path prefix filter (e.g., "maven/org/lwjgl/") if you want a list of matching files instead of direct extraction
  * @returns      A buffer or an array of { name, data }, or a list of filenames if prefix is given
  */
-async function getFileFromArchive(jar: string, file: string | null = null, prefix: string | null = null, includeDirs: boolean = false): Promise<any> {
+async function getFileFromArchive(
+	jar: string,
+	file: string | null = null,
+	prefix: string | null = null,
+	includeDirs: boolean = false,
+): Promise<any> {
 	const result: any[] = [];
 	const zip = new Unzipper(jar);
 	const entries = zip.getEntries();
 
 	return new Promise((resolve) => {
 		for (const entry of entries) {
-			if (includeDirs ? !prefix : (!entry.isDirectory && !prefix)) {
+			if (includeDirs ? !prefix : !entry.isDirectory && !prefix) {
 				// If no prefix is given, either return a specific file if 'file' is set,
 				// or accumulate all entries if 'file' is null
 				if (entry.entryName === file) {
-					return resolve(entry.getData());
+					try {
+						const data = entry.getData();
+						return resolve(data);
+					} catch (e: any) {
+						return resolve(undefined);
+					}
 				} else if (!file) {
-					result.push({ name: entry.entryName, data: entry.getData(), isDirectory: entry.isDirectory });
+					try {
+						const data = entry.getData();
+						result.push({ name: entry.entryName, data, isDirectory: entry.isDirectory });
+					} catch (e: any) {
+						console.warn(`Failed to read entry '${entry.entryName}' in '${jar}': ${e.message}`);
+					}
 				}
 			}
 
@@ -217,7 +234,7 @@ function skipLibrary(lib: MinecraftLibrary): boolean {
 	const LibMap: Record<string, string> = {
 		win32: 'windows',
 		darwin: 'osx',
-		linux: 'linux'
+		linux: 'linux',
 	};
 
 	// If no rules, it's not skipped
@@ -236,15 +253,9 @@ function skipLibrary(lib: MinecraftLibrary): boolean {
 
 		// "allow" means it can be used if OS matches (or no OS specified)
 		// "disallow" means skip if OS matches (or no OS specified)
-		if (
-			rule.action === 'allow' &&
-			((rule.os && rule.os.name === LibMap[process.platform]) || !rule.os)
-		) {
+		if (rule.action === 'allow' && ((rule.os && rule.os.name === LibMap[process.platform]) || !rule.os)) {
 			shouldSkip = false;
-		} else if (
-			rule.action === 'disallow' &&
-			((rule.os && rule.os.name === LibMap[process.platform]) || !rule.os)
-		) {
+		} else if (rule.action === 'disallow' && ((rule.os && rule.os.name === LibMap[process.platform]) || !rule.os)) {
 			shouldSkip = true;
 		}
 	}
@@ -255,34 +266,34 @@ function skipLibrary(lib: MinecraftLibrary): boolean {
 function fromAnyReadable(webStream: ReadableStream<Uint8Array>): import('node:stream').Readable {
 	let NodeReadableStreamCtor: any;
 	if (!NodeReadableStreamCtor && typeof globalThis?.navigator === 'undefined') {
-		import('node:stream/web').then((mod) => { NodeReadableStreamCtor = mod.ReadableStream; });
+		import('node:stream/web').then((mod) => {
+			NodeReadableStreamCtor = mod.ReadableStream;
+		});
 	}
-	if (NodeReadableStreamCtor && webStream instanceof NodeReadableStreamCtor && typeof (Readable as any).fromWeb === 'function') {
+	if (
+		NodeReadableStreamCtor &&
+		webStream instanceof NodeReadableStreamCtor &&
+		typeof (Readable as any).fromWeb === 'function'
+	) {
 		return Readable.fromWeb(webStream as any);
 	}
 
-	const nodeStream = new Readable({ read() { } });
+	const nodeStream = new Readable({ read() {} });
 	const reader = webStream.getReader();
 
 	(function pump() {
-		reader.read().then(({ done, value }) => {
-			if (done) return nodeStream.push(null);
-			nodeStream.push(Buffer.from(value));
-			pump();
-		}).catch(err => nodeStream.destroy(err));
+		reader
+			.read()
+			.then(({ done, value }) => {
+				if (done) return nodeStream.push(null);
+				nodeStream.push(Buffer.from(value));
+				pump();
+			})
+			.catch((err) => nodeStream.destroy(err));
 	})();
 
 	return nodeStream;
 }
 
 // Export all utility functions and constants
-export {
-	getPathLibraries,
-	getFileHash,
-	isold,
-	loader,
-	mirrors,
-	getFileFromArchive,
-	skipLibrary,
-	fromAnyReadable
-};
+export { getPathLibraries, getFileHash, isold, loader, mirrors, getFileFromArchive, skipLibrary, fromAnyReadable };
