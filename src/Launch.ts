@@ -1,3 +1,4 @@
+import os from 'os';
 /**
  * @author Luuxis
  * Luuxis License v1.0 (voir fichier LICENSE pour les détails en FR/EN)
@@ -6,7 +7,7 @@
 import { EventEmitter } from 'events';
 import path from 'path';
 import fs from 'fs';
-import { spawn, ChildProcess } from 'child_process';
+import { spawn, ChildProcess, execSync } from 'child_process';
 
 import jsonMinecraft from './Minecraft/Minecraft-Json.js';
 import librariesMinecraft from './Minecraft/Minecraft-Libraries.js';
@@ -173,6 +174,10 @@ export type LaunchOPTS = {
 	 */
 	verify: boolean;
 	/**
+	 * Force the use of a dedicated GPU.
+	 */
+	forceGPU?: boolean;
+	/**
 	 * Files to ignore from instance. (idk actually luuxis please verify this)
 	 */
 	ignored: string[];
@@ -333,6 +338,12 @@ export default class Launch extends EventEmitter {
 		if (this.isCancelled) {
 			this.emit('cancelled', 'Launch has been cancelled');
 			return;
+		}
+
+		if (this.options.forceGPU && os.platform() === 'win32') {
+			execSync(
+				`reg add "HKCU\\Software\\Microsoft\\DirectX\\UserGpuPreferences" /v "${java}" /t REG_SZ /d "GpuPreference=2;" /f`,
+			);
 		}
 
 		this.minecraftProcess = spawn(java, Arguments, { cwd: logs, detached: this.options.detached });
